@@ -16,7 +16,7 @@ class DashboardRepository:
             select(
                 func.count().label("total_donaciones"),
                 func.coalesce(
-                    func.sum(case((Donacion.moneda == "USD", Donacion.cantidad), else_=0)), 0
+                    func.sum(case((Donacion.moneda == "DOLARES", Donacion.cantidad), else_=0)), 0
                 ).label("total_usd"),
                 func.coalesce(
                     func.sum(case((Donacion.moneda == "BOLIVARES", Donacion.cantidad), else_=0)), 0
@@ -25,7 +25,7 @@ class DashboardRepository:
                     func.sum(case((Donacion.moneda == "USDT", Donacion.cantidad), else_=0)), 0
                 ).label("total_usdt"),
                 func.coalesce(
-                    func.sum(case((Donacion.moneda == "EUR", Donacion.cantidad), else_=0)), 0
+                    func.sum(case((Donacion.moneda == "EURO", Donacion.cantidad), else_=0)), 0
                 ).label("total_eur"),
             ).select_from(Donacion)
         )

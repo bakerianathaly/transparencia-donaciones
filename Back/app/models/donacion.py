@@ -16,8 +16,7 @@ class Donacion(SQLModel, table=True):
         default_factory=uuid.uuid4,
         sa_column=Column(UUID, primary_key=True),
     )
-    nombre: str = Field(max_length=100)
-    apellido: str = Field(max_length=100)
+    nombre: str = Field(max_length=200)
     moneda: str = Field(max_length=10)
     cantidad: Decimal = Field(max_digits=18, decimal_places=2)
     tasa_cambio: Optional[Decimal] = Field(default=None, max_digits=18, decimal_places=6)
@@ -35,8 +34,7 @@ class Donacion(SQLModel, table=True):
 
 # ─── Schemas API ─────────────────────────────────────────────
 class DonacionCreate(SQLModel):
-    nombre: str = Field(max_length=100)
-    apellido: str = Field(max_length=100)
+    nombre: str = Field(max_length=200)
     moneda: str = Field(max_length=10)
     cantidad: Decimal = Field(decimal_places=2)
     tasa_cambio: Optional[Decimal] = Field(default=None, decimal_places=6)
@@ -46,7 +44,6 @@ class DonacionCreate(SQLModel):
 class DonacionResponse(SQLModel):
     id: uuid.UUID
     nombre: str
-    apellido: str
     moneda: str
     cantidad: Decimal
     tasa_cambio: Optional[Decimal]
