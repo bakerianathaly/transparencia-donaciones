@@ -39,3 +39,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Claude Code (local/personal config)
+.claude/settings.local.json
+
+# Agent skills: las skills vendoreadas se re-descargan desde skills-lock.json,
+# así que versionamos el lock (el manifiesto) e ignoramos el contenido bajado.
+/.agents/skills/

@@ -22,9 +22,12 @@ export async function registerDonation(
   formData: FormData,
 ): Promise<DonationActionState> {
   const rawRate = formData.get("exchangeRate");
+  const rawAmount = formData.get("amount");
 
   const parsed = donationSchema.safeParse({
     name: formData.get("name"),
+    amount:
+      rawAmount === null || rawAmount === "" ? undefined : Number(rawAmount),
     currency: formData.get("currency"),
     exchangeRate:
       rawRate === null || rawRate === "" ? undefined : Number(rawRate),

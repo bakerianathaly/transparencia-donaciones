@@ -11,10 +11,16 @@ import {
 } from "@/lib/donations/schema";
 import { registerDonation, type DonationActionState } from "@/app/actions";
 
+// text-base (16px) evita el zoom automático de iOS al enfocar un campo.
 const fieldClass =
-  "w-full rounded-md border border-black/15 bg-transparent px-3 py-2 text-sm outline-none transition focus:border-foreground/60 disabled:cursor-not-allowed disabled:opacity-50 dark:border-white/20";
-const labelClass = "block text-sm font-medium";
-const errorClass = "text-xs text-red-600 dark:text-red-400";
+  "w-full rounded-xl border border-border bg-surface px-4 py-3 text-base text-foreground outline-none transition placeholder:text-muted/60 focus:border-accent focus:ring-4 focus:ring-accent/10 disabled:cursor-not-allowed disabled:bg-black/[0.03] disabled:opacity-60";
+const labelClass = "block text-sm font-semibold text-foreground";
+const errorClass = "text-sm font-medium text-danger";
+const requiredMark = (
+  <span className="text-danger" aria-hidden="true">
+    *
+  </span>
+);
 
 export function DonationForm() {
   const [isPending, startTransition] = useTransition();
@@ -48,6 +54,7 @@ export function DonationForm() {
   const onSubmit = handleSubmit((data) => {
     const formData = new FormData();
     formData.set("name", data.name);
+    formData.set("amount", String(data.amount));
     formData.set("currency", data.currency);
     if (data.exchangeRate != null) {
       formData.set("exchangeRate", String(data.exchangeRate));
@@ -66,16 +73,25 @@ export function DonationForm() {
   });
 
   return (
-    <form onSubmit={onSubmit} noValidate className="flex flex-col gap-5">
+    <form
+      onSubmit={onSubmit}
+      noValidate
+      className="flex flex-col gap-5 rounded-2xl border border-border bg-surface p-5 shadow-sm"
+    >
+      <p className="text-sm text-muted">
+        Los campos marcados con{" "}
+        <span className="font-semibold text-danger">*</span> son obligatorios.
+      </p>
+
       <div className="flex flex-col gap-1.5">
         <label htmlFor="name" className={labelClass}>
-          Nombre
+          Nombre completo {requiredMark}
         </label>
         <input
           id="name"
           type="text"
           autoComplete="name"
-          placeholder="Nombre del donante"
+          placeholder="Nombre completo del donante"
           className={fieldClass}
           {...register("name")}
         />
@@ -83,8 +99,28 @@ export function DonationForm() {
       </div>
 
       <div className="flex flex-col gap-1.5">
+        <label htmlFor="amount" className={labelClass}>
+          Monto {requiredMark}
+        </label>
+        <input
+          id="amount"
+          type="number"
+          inputMode="decimal"
+          step="any"
+          min="0"
+          placeholder="Monto del aporte"
+          className={fieldClass}
+          {...register("amount", {
+            setValueAs: (value) =>
+              value === "" || value === null ? undefined : Number(value),
+          })}
+        />
+        {errors.amount && <p className={errorClass}>{errors.amount.message}</p>}
+      </div>
+
+      <div className="flex flex-col gap-1.5">
         <label htmlFor="currency" className={labelClass}>
-          Moneda
+          Moneda {requiredMark}
         </label>
         <select id="currency" className={fieldClass} {...register("currency")}>
           {CURRENCIES.map((value) => (
@@ -102,9 +138,7 @@ export function DonationForm() {
         <label htmlFor="exchangeRate" className={labelClass}>
           Tasa de cambio
           {!rateEnabled && (
-            <span className="ml-1 font-normal text-foreground/50">
-              (solo para BS)
-            </span>
+            <span className="ml-1 font-normal text-muted">(solo para BS)</span>
           )}
         </label>
         <input
@@ -128,7 +162,7 @@ export function DonationForm() {
 
       <div className="flex flex-col gap-1.5">
         <label htmlFor="reference" className={labelClass}>
-          Imagen de referencia
+          Imagen de referencia {requiredMark}
         </label>
         <Controller
           control={control}
@@ -142,7 +176,7 @@ export function DonationForm() {
               ref={ref}
               onBlur={onBlur}
               onChange={(event) => onChange(event.target.files?.[0])}
-              className={`${fieldClass} file:mr-3 file:rounded file:border-0 file:bg-foreground file:px-3 file:py-1 file:text-background`}
+              className={`${fieldClass} py-2.5 text-muted file:mr-3 file:rounded-lg file:border-0 file:bg-accent-soft file:px-3 file:py-2 file:text-sm file:font-semibold file:text-accent-strong`}
             />
           )}
         />
@@ -154,18 +188,20 @@ export function DonationForm() {
       <button
         type="submit"
         disabled={isPending}
-        className="rounded-md bg-foreground px-4 py-2.5 text-sm font-medium text-background transition hover:opacity-90 disabled:opacity-50"
+        className="mt-1 rounded-xl bg-accent px-4 py-3.5 text-base font-semibold text-white shadow-sm transition hover:bg-accent-strong active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60"
       >
-        {isPending ? "Registrando…" : "Registrar donación"}
+        {isPending ? "Registrando…" : "Registrar aporte"}
       </button>
 
       {serverState.status === "success" && (
-        <p className="text-sm text-green-700 dark:text-green-400">
+        <p className="rounded-xl bg-success/10 px-4 py-3 text-sm font-medium text-success">
           {serverState.message}
         </p>
       )}
       {serverState.status === "error" && (
-        <p className={errorClass}>{serverState.message}</p>
+        <p className="rounded-xl bg-danger/10 px-4 py-3 text-sm font-medium text-danger">
+          {serverState.message}
+        </p>
       )}
     </form>
   );

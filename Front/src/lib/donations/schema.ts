@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 /** Monedas aceptadas para registrar una donación. */
-export const CURRENCIES = ["USD", "USDT", "BS"] as const;
+export const CURRENCIES = ["USD", "EUR", "USDT", "BS"] as const;
 export type Currency = (typeof CURRENCIES)[number];
 
 /** La tasa de cambio solo aplica cuando la moneda es bolívares. */
@@ -36,7 +36,13 @@ const referenceImageSchema = z
  */
 export const donationSchema = z
   .object({
-    name: z.string().trim().min(1, { error: "El nombre es obligatorio" }),
+    name: z
+      .string()
+      .trim()
+      .min(1, { error: "El nombre completo es obligatorio" }),
+    amount: z
+      .number({ error: "Ingresá un monto válido" })
+      .positive({ error: "El monto debe ser mayor a 0" }),
     currency: z.enum(CURRENCIES, { error: "Seleccioná una moneda" }),
     exchangeRate: z
       .number({ error: "La tasa de cambio debe ser un número" })

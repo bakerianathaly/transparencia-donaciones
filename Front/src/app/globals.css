@@ -1,26 +1,62 @@
 @import "tailwindcss";
 
+/*
+ * Tema único: light mode. El proyecto es un formulario de emergencia usado
+ * mayormente en el teléfono, así que priorizamos legibilidad y confianza.
+ * Sin dark mode a propósito: una sola identidad, clara y consistente.
+ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #fffbfa; /* blanco cálido */
+  --surface: #ffffff; /* tarjetas / campos */
+  --foreground: #1a1a1a;
+  --muted: #6f6663; /* texto secundario */
+  --border: #ece3e1; /* líneas suaves cálidas */
+  --accent: #e11d48; /* acción principal / urgencia */
+  --accent-strong: #be123c; /* hover / texto sobre tinte */
+  --accent-soft: #fdeef1; /* fondo de tinte del acento */
+  --danger: #b91c1c; /* errores: rojo ladrillo, distinto del acento */
+  --success: #15803d;
 }
 
 @theme inline {
   --color-background: var(--background);
+  --color-surface: var(--surface);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+  --color-accent-strong: var(--accent-strong);
+  --color-accent-soft: var(--accent-soft);
+  --color-danger: var(--danger);
+  --color-success: var(--success);
+  --font-sans: var(--font-hanken), system-ui, sans-serif;
+  --font-display: var(--font-fraunces), Georgia, serif;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Aparición escalonada y serena al cargar — gravedad sin estridencia. */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.rise {
+  animation: rise 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rise,
+  .animate-pulse {
+    animation: none;
+  }
 }

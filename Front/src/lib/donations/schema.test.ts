@@ -8,6 +8,7 @@ function pngFile(name = "ref.png") {
 function baseInput() {
   return {
     name: "Ada Lovelace",
+    amount: 100,
     reference: pngFile(),
   };
 }
@@ -49,6 +50,14 @@ describe("donationSchema — exchange rate rule", () => {
     expect(result.success).toBe(true);
   });
 
+  it("accepts EUR without exchangeRate", () => {
+    const result = donationSchema.safeParse({
+      ...baseInput(),
+      currency: "EUR",
+    });
+    expect(result.success).toBe(true);
+  });
+
   it("rejects a non-positive exchangeRate", () => {
     const errors = fieldErrors({
       ...baseInput(),
@@ -70,8 +79,22 @@ describe("donationSchema — required fields", () => {
   });
 
   it("rejects a missing reference image", () => {
-    const errors = fieldErrors({ name: "Ada", currency: "USD" });
+    const errors = fieldErrors({ name: "Ada", amount: 100, currency: "USD" });
     expect(errors).toContain("reference");
+  });
+
+  it("rejects a missing amount", () => {
+    const errors = fieldErrors({
+      name: "Ada",
+      currency: "USD",
+      reference: pngFile(),
+    });
+    expect(errors).toContain("amount");
+  });
+
+  it("rejects a non-positive amount", () => {
+    const errors = fieldErrors({ ...baseInput(), currency: "USD", amount: 0 });
+    expect(errors).toContain("amount");
   });
 
   it("rejects an oversized reference image", () => {
