@@ -8,6 +8,7 @@ import { API_BASE_URL } from "@/lib/api";
 const CURRENCY_LABELS: Record<string, string> = {
   USD: "Dolares",
   EUR: "Euros",
+  GBP: "Libras Esterlinas",
   USDT: "USDT",
   BS: "Bolivares",
 };
@@ -42,7 +43,6 @@ export async function registerDonation(
       rawRate === null || rawRate === "" ? undefined : Number(rawRate),
     reference: formData.get("reference"),
   });
-
   if (!parsed.success) {
     return {
       status: "error",
@@ -57,14 +57,14 @@ export async function registerDonation(
   ).toString("base64");
 
   const payload = {
-    nombre_completo: parsed.data.name,
+    nombre: parsed.data.name,
     moneda: CURRENCY_LABELS[parsed.data.currency],
     cantidad: parsed.data.amount,
     tasa_cambio: parsed.data.exchangeRate ?? null,
     imagen_base64: imagenBase64,
   };
-
   try {
+    console.log('hola de nuevo')
     const res = await fetch(`${API_BASE_URL}/api/v1/donaciones/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },

@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 /** Monedas aceptadas para registrar una donación. */
-export const CURRENCIES = ["USD", "EUR", "USDT", "BS"] as const;
+export const CURRENCIES = ["USD", "EUR", "GBP", "USDT", "BS"] as const;
 export type Currency = (typeof CURRENCIES)[number];
 
 /** La tasa de cambio solo aplica cuando la moneda es bolívares. */

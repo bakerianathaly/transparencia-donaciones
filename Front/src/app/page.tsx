@@ -1,5 +1,4 @@
 import Image from "next/image";
-import Link from "next/link";
 import DonationCard from "@/components/donation-card";
 import CopyField from "@/components/copy-field";
 import PageHeader from "@/components/page-header";
@@ -35,9 +34,10 @@ export default function Home() {
         <div className="rounded-2xl border-2 border-accent bg-accent-soft px-4 py-4 text-center">
           <p className="font-display text-lg font-semibold leading-snug text-accent-strong">
             A esta cuenta se deben enviar los montos de Bs, USD y Euros
+            <br/>¡Importante! Después de hacer tu transferencia, registrá tu donación (3er botón). Sin el registro no podemos confirmar ni contabilizar tu aporte.
           </p>
         </div>
-        <Image
+        {/* <Image
           src="/compress-principal.png"
           alt="Datos de cuenta bancaria para enviar las donaciones en Bs, USD y Euros"
           width={859}
@@ -46,7 +46,7 @@ export default function Home() {
           quality={70}
           className="w-full h-auto rounded-2xl shadow-sm"
           priority
-        />
+        /> */}
       </section>
 
       <div className="flex flex-col gap-5">
@@ -102,26 +102,6 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="rise flex flex-col gap-3" style={{ animationDelay: "0.40s" }}>
-        <Link
-          href="/registro"
-          className="rounded-xl bg-accent px-4 py-4 text-center text-base font-semibold text-white shadow-sm transition hover:bg-accent-strong active:scale-[0.99]"
-        >
-          Registrar donación
-        </Link>
-        <Link
-          href="/resumen"
-          className="rounded-xl border border-border bg-surface px-4 py-3 text-center text-sm font-semibold text-muted shadow-sm transition hover:text-accent-strong hover:border-accent/40 active:scale-[0.99]"
-        >
-          Ver resumen
-        </Link>
-        <Link
-          href="/compras"
-          className="rounded-xl border border-accent px-4 py-4 text-center text-base font-semibold text-accent-strong transition hover:bg-accent-soft active:scale-[0.99]"
-        >
-          Registrar compra
-        </Link>
-      </div>
     </main>
   );
 }
