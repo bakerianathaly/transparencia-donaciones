@@ -19,22 +19,25 @@ class CrearDonacion:
         self._validar(data)
 
         loop = asyncio.get_event_loop()
-        imagen_url = await loop.run_in_executor(None, self.r2.subir_imagen, data.imagen_base64)
+        imagen_url = await loop.run_in_executor(
+            None, self.r2.subir_imagen, data.imagen_base64
+        )
         data.moneda = data.moneda.upper()
         cantidad_bolivares = (
             data.cantidad
             if data.moneda == "BOLIVARES"
-            else (data.cantidad * data.tasa_cambio if data.tasa_cambio is not None else None)
+            else (
+                data.cantidad * data.tasa_cambio
+                if data.tasa_cambio is not None
+                else None
+            )
         )
-        
+
         return await self.repository.create(data, imagen_url, cantidad_bolivares)
 
     def _validar(self, data: DonacionCreate) -> None:
         if not data.nombre or len(data.nombre.strip()) < 2:
             raise ValidationException("El nombre debe tener al menos 2 caracteres")
-
-        if not data.apellido or len(data.apellido.strip()) < 2:
-            raise ValidationException("El apellido debe tener al menos 2 caracteres")
 
         if not data.moneda or len(data.moneda.strip()) == 0:
             raise ValidationException("La moneda es requerida")

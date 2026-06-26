@@ -15,7 +15,6 @@ class DonacionRepository:
         try:
             donacion = Donacion(
                 nombre=data.nombre,
-                apellido=data.apellido,
                 moneda=data.moneda,
                 cantidad=data.cantidad,
                 tasa_cambio=data.tasa_cambio,
