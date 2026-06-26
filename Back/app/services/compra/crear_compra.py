@@ -6,7 +6,7 @@ from app.models.compra import Compra, CompraCreate
 from app.repositories.compra_repository import CompraRepository
 from app.services.r2 import R2Service
 
-MONEDAS_VALIDAS = {"EURO", "DOLARES", "USDT", "BOLIVARES"}
+MONEDAS_VALIDAS = {"EURO", "DOLARES", "USDT", "BOLIVARES", "LIBRAS ESTERLINAS"}
 
 
 class CrearCompra:

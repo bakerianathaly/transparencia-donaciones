@@ -29,7 +29,7 @@ class DashboardRepository:
                     func.sum(case((Donacion.moneda == "EURO", Donacion.cantidad), else_=0)), 0
                 ).label("total_eur"),
                 func.coalesce(
-                    func.sum(case((Donacion.moneda == "LIBRAS", Donacion.cantidad), else_=0)), 0
+                    func.sum(case((Donacion.moneda == "LIBRAS ESTERLINAS", Donacion.cantidad), else_=0)), 0
                 ).label("total_libras"),
             ).select_from(Donacion)
         )
@@ -50,7 +50,7 @@ class DashboardRepository:
                     func.sum(case((Compra.moneda == "EURO", Compra.cantidad), else_=0)), 0
                 ).label("total_eur"),
                 func.coalesce(
-                    func.sum(case((Compra.moneda == "LIBRAS", Compra.cantidad), else_=0)), 0
+                    func.sum(case((Compra.moneda == "LIBRAS ESTERLINAS", Compra.cantidad), else_=0)), 0
                 ).label("total_libras"),
             ).select_from(Compra)
         )
