@@ -1,22 +1,4 @@
 services:
-    db:
-        image: postgres:16
-        environment:
-            POSTGRES_USER: ${DB_USER}
-            POSTGRES_PASSWORD: ${DB_PASSWORD}
-            POSTGRES_DB: ${DB_NAME}
-        ports:
-            - "5432:5432"
-        volumes:
-            - postgres_data:/var/lib/postgresql/data
-        healthcheck:
-            test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
-            interval: 5s
-            timeout: 5s
-            retries: 10
-        networks:
-            - testing-net
-
     server-terremoto:
         build:
             context: .
@@ -30,9 +12,6 @@ services:
             - ./.env:/app/.env
         env_file:
             - .env
-        depends_on:
-            db:
-                condition: service_healthy
         restart: unless-stopped
         dns:
             - 8.8.8.8
@@ -45,9 +24,6 @@ services:
             start_period: 10s
         networks:
             - testing-net
-
-volumes:
-    postgres_data:
 
 networks:
     testing-net:
