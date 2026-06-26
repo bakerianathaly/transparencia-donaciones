@@ -115,6 +115,12 @@ export default function Home() {
         >
           Ver resumen
         </Link>
+        <Link
+          href="/compras"
+          className="rounded-xl border border-accent px-4 py-4 text-center text-base font-semibold text-accent-strong transition hover:bg-accent-soft active:scale-[0.99]"
+        >
+          Registrar compra
+        </Link>
       </div>
     </main>
   );

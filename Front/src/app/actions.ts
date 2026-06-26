@@ -2,6 +2,7 @@
 
 import { z } from "zod";
 import { donationSchema } from "@/lib/donations/schema";
+import { purchaseSchema } from "@/lib/purchases/schema";
 import { API_BASE_URL } from "@/lib/api";
 
 const CURRENCY_LABELS: Record<string, string> = {
@@ -87,4 +88,40 @@ export async function registerDonation(
       message: "No se pudo conectar con el servidor. Intentá de nuevo.",
     };
   }
+}
+
+export type PurchaseActionState =
+  | { status: "idle" }
+  | { status: "success"; message: string }
+  | {
+      status: "error";
+      message: string;
+      fieldErrors?: Record<string, string[] | undefined>;
+    };
+
+/**
+ * Registra una compra.
+ *
+ * Recibe la imagen del comprobante como data URL base64 (no multipart), valida
+ * del lado del servidor y confirma. El envío real al backend (FastAPI, carpeta
+ * Back/) se cablea cuando el endpoint esté listo.
+ */
+export async function registerPurchase(
+  input: unknown,
+): Promise<PurchaseActionState> {
+  const parsed = purchaseSchema.safeParse(input);
+
+  if (!parsed.success) {
+    return {
+      status: "error",
+      message: "Revisá los campos del formulario.",
+      fieldErrors: z.flattenError(parsed.error).fieldErrors,
+    };
+  }
+
+  // TODO(Back): POST hacia la API de FastAPI cuando exista el endpoint.
+  return {
+    status: "success",
+    message: `Compra en ${parsed.data.storeName} registrada (pendiente de envío al backend).`,
+  };
 }
