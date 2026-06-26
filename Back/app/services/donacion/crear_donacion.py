@@ -24,7 +24,7 @@ class CrearDonacion:
         cantidad_bolivares = (
             data.cantidad
             if data.moneda == "BOLIVARES"
-            else data.cantidad * data.tasa_cambio
+            else (data.cantidad * data.tasa_cambio if data.tasa_cambio is not None else None)
         )
         
         return await self.repository.create(data, imagen_url, cantidad_bolivares)
@@ -42,13 +42,8 @@ class CrearDonacion:
         if data.cantidad < self.MIN_CANTIDAD:
             raise ValidationException("La cantidad debe ser mayor a 0")
 
-        if data.moneda != "BOLIVARES":
-            if data.tasa_cambio is None:
-                raise ValidationException(
-                    "La tasa de cambio es requerida cuando la moneda no es BOLIVARES"
-                )
-            if data.tasa_cambio < self.MIN_TASA:
-                raise ValidationException("La tasa de cambio debe ser mayor a 0")
+        if data.tasa_cambio is not None and data.tasa_cambio < self.MIN_TASA:
+            raise ValidationException("La tasa de cambio debe ser mayor a 0")
 
         if not data.imagen_base64 or len(data.imagen_base64.strip()) == 0:
             raise ValidationException("La imagen es requerida")
