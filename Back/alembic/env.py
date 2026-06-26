@@ -11,7 +11,8 @@ from alembic import context
 dotenv_path = Path(__file__).parent.parent / ".env"
 load_dotenv(dotenv_path)
 
-from app.db.sessions import SQLModel
+from sqlmodel import SQLModel
+import app.models  # noqa: F401 — registra todos los modelos en SQLModel.metadata
 
 config = context.config
 

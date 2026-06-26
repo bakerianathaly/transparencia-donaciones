@@ -1,3 +1,5 @@
-from app.models.producto import Producto, ProductoCreate, ProductoResponse
+from app.models.donacion import Donacion
 
-__all__ = ["Producto", "ProductoCreate", "ProductoResponse"]
+__all__ = [
+    "Donacion",
+]
