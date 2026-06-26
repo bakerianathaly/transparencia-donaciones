@@ -2,6 +2,14 @@
 
 import { z } from "zod";
 import { donationSchema } from "@/lib/donations/schema";
+import { API_BASE_URL } from "@/lib/api";
+
+const CURRENCY_LABELS: Record<string, string> = {
+  USD: "Dolares",
+  EUR: "Euros",
+  USDT: "USDT",
+  BS: "Bolivares",
+};
 
 export type DonationActionState =
   | { status: "idle" }
@@ -15,8 +23,8 @@ export type DonationActionState =
 /**
  * Registra una donación.
  *
- * Por ahora solo valida del lado del servidor y confirma. El envío real al
- * backend (FastAPI, carpeta Back/) se cablea cuando el endpoint esté listo.
+ * Valida del lado del servidor y envía el payload JSON al backend
+ * (FastAPI, carpeta Back/) en POST /api/v1/donaciones/.
  */
 export async function registerDonation(
   formData: FormData,
@@ -42,9 +50,41 @@ export async function registerDonation(
     };
   }
 
-  // TODO(Back): POST multipart hacia la API de FastAPI cuando exista el endpoint.
-  return {
-    status: "success",
-    message: `Donación de ${parsed.data.name} registrada (pendiente de envío al backend).`,
+  // Convertir la imagen de referencia a base64 puro (sin prefijo data:)
+  const imagenBase64 = Buffer.from(
+    await parsed.data.reference.arrayBuffer(),
+  ).toString("base64");
+
+  const payload = {
+    nombre_completo: parsed.data.name,
+    moneda: CURRENCY_LABELS[parsed.data.currency],
+    cantidad: parsed.data.amount,
+    tasa_cambio: parsed.data.exchangeRate ?? null,
+    imagen_base64: imagenBase64,
   };
+
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/v1/donaciones/`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    if (!res.ok) {
+      return {
+        status: "error",
+        message: "No se pudo registrar la donación. Intentá de nuevo.",
+      };
+    }
+
+    return {
+      status: "success",
+      message: "¡Tu donación fue registrada exitosamente!",
+    };
+  } catch {
+    return {
+      status: "error",
+      message: "No se pudo conectar con el servidor. Intentá de nuevo.",
+    };
+  }
 }

@@ -72,137 +72,158 @@ export function DonationForm() {
     });
   });
 
+  if (serverState.status === "success") {
+    return (
+      <div className="flex flex-col gap-5 rounded-2xl border border-success/30 bg-success/10 p-5 shadow-sm">
+        <div className="flex flex-col gap-2">
+          <p className="text-lg font-semibold text-success">
+            ¡Donación registrada!
+          </p>
+          <p className="text-sm text-success/80">
+            {serverState.message ?? "Tus datos fueron registrados exitosamente."}
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={() => {
+            setServerState({ status: "idle" });
+            reset({ name: "", currency: "USD" });
+          }}
+          className="mt-1 rounded-xl bg-success px-4 py-3.5 text-base font-semibold text-white shadow-sm transition hover:opacity-90 active:scale-[0.99]"
+        >
+          Registrar otra donación
+        </button>
+      </div>
+    );
+  }
+
   return (
     <form
       onSubmit={onSubmit}
       noValidate
-      className="flex flex-col gap-5 rounded-2xl border border-border bg-surface p-5 shadow-sm"
+      className="rounded-2xl border border-border bg-surface p-5 shadow-sm"
     >
-      <p className="text-sm text-muted">
-        Los campos marcados con{" "}
-        <span className="font-semibold text-danger">*</span> son obligatorios.
-      </p>
-
-      <div className="flex flex-col gap-1.5">
-        <label htmlFor="name" className={labelClass}>
-          Nombre completo {requiredMark}
-        </label>
-        <input
-          id="name"
-          type="text"
-          autoComplete="name"
-          placeholder="Nombre completo del donante"
-          className={fieldClass}
-          {...register("name")}
-        />
-        {errors.name && <p className={errorClass}>{errors.name.message}</p>}
-      </div>
-
-      <div className="flex flex-col gap-1.5">
-        <label htmlFor="amount" className={labelClass}>
-          Monto {requiredMark}
-        </label>
-        <input
-          id="amount"
-          type="number"
-          inputMode="decimal"
-          step="any"
-          min="0"
-          placeholder="Monto del aporte"
-          className={fieldClass}
-          {...register("amount", {
-            setValueAs: (value) =>
-              value === "" || value === null ? undefined : Number(value),
-          })}
-        />
-        {errors.amount && <p className={errorClass}>{errors.amount.message}</p>}
-      </div>
-
-      <div className="flex flex-col gap-1.5">
-        <label htmlFor="currency" className={labelClass}>
-          Moneda {requiredMark}
-        </label>
-        <select id="currency" className={fieldClass} {...register("currency")}>
-          {CURRENCIES.map((value) => (
-            <option key={value} value={value}>
-              {value}
-            </option>
-          ))}
-        </select>
-        {errors.currency && (
-          <p className={errorClass}>{errors.currency.message}</p>
-        )}
-      </div>
-
-      <div className="flex flex-col gap-1.5">
-        <label htmlFor="exchangeRate" className={labelClass}>
-          Tasa de cambio
-          {!rateEnabled && (
-            <span className="ml-1 font-normal text-muted">(solo para BS)</span>
-          )}
-        </label>
-        <input
-          id="exchangeRate"
-          type="number"
-          inputMode="decimal"
-          step="any"
-          min="0"
-          disabled={!rateEnabled}
-          placeholder={rateEnabled ? "Bs por unidad" : "—"}
-          className={fieldClass}
-          {...register("exchangeRate", {
-            setValueAs: (value) =>
-              value === "" || value === null ? undefined : Number(value),
-          })}
-        />
-        {errors.exchangeRate && (
-          <p className={errorClass}>{errors.exchangeRate.message}</p>
-        )}
-      </div>
-
-      <div className="flex flex-col gap-1.5">
-        <label htmlFor="reference" className={labelClass}>
-          Imagen de referencia {requiredMark}
-        </label>
-        <Controller
-          control={control}
-          name="reference"
-          render={({ field: { onChange, onBlur, name, ref } }) => (
-            <input
-              id="reference"
-              type="file"
-              accept="image/jpeg,image/png,image/webp"
-              name={name}
-              ref={ref}
-              onBlur={onBlur}
-              onChange={(event) => onChange(event.target.files?.[0])}
-              className={`${fieldClass} py-2.5 text-muted file:mr-3 file:rounded-lg file:border-0 file:bg-accent-soft file:px-3 file:py-2 file:text-sm file:font-semibold file:text-accent-strong`}
-            />
-          )}
-        />
-        {errors.reference && (
-          <p className={errorClass}>{errors.reference.message as string}</p>
-        )}
-      </div>
-
-      <button
-        type="submit"
-        disabled={isPending}
-        className="mt-1 rounded-xl bg-accent px-4 py-3.5 text-base font-semibold text-white shadow-sm transition hover:bg-accent-strong active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60"
-      >
-        {isPending ? "Registrando…" : "Registrar aporte"}
-      </button>
-
-      {serverState.status === "success" && (
-        <p className="rounded-xl bg-success/10 px-4 py-3 text-sm font-medium text-success">
-          {serverState.message}
+      <fieldset disabled={isPending} className="flex min-w-0 flex-col gap-5">
+        <p className="text-sm text-muted">
+          Los campos marcados con{" "}
+          <span className="font-semibold text-danger">*</span> son obligatorios.
         </p>
-      )}
-      {serverState.status === "error" && (
-        <p className="rounded-xl bg-danger/10 px-4 py-3 text-sm font-medium text-danger">
-          {serverState.message}
-        </p>
-      )}
+
+        <div className="flex flex-col gap-1.5">
+          <label htmlFor="name" className={labelClass}>
+            Nombre completo {requiredMark}
+          </label>
+          <input
+            id="name"
+            type="text"
+            autoComplete="name"
+            placeholder="Nombre completo del donante"
+            className={fieldClass}
+            {...register("name")}
+          />
+          {errors.name ? <p className={errorClass}>{errors.name.message}</p> : null}
+        </div>
+
+        <div className="flex flex-col gap-1.5">
+          <label htmlFor="amount" className={labelClass}>
+            Monto {requiredMark}
+          </label>
+          <input
+            id="amount"
+            type="number"
+            inputMode="decimal"
+            step="any"
+            min="0"
+            placeholder="Monto del aporte"
+            className={fieldClass}
+            {...register("amount", {
+              setValueAs: (value) =>
+                value === "" || value === null ? undefined : Number(value),
+            })}
+          />
+          {errors.amount ? <p className={errorClass}>{errors.amount.message}</p> : null}
+        </div>
+
+        <div className="flex flex-col gap-1.5">
+          <label htmlFor="currency" className={labelClass}>
+            Moneda {requiredMark}
+          </label>
+          <select id="currency" className={fieldClass} {...register("currency")}>
+            {CURRENCIES.map((value) => (
+              <option key={value} value={value}>
+                {value}
+              </option>
+            ))}
+          </select>
+          {errors.currency ? (
+            <p className={errorClass}>{errors.currency.message}</p>
+          ) : null}
+        </div>
+
+        <div className="flex flex-col gap-1.5">
+          <label htmlFor="exchangeRate" className={labelClass}>
+            Tasa de cambio
+            {!rateEnabled ? (
+              <span className="ml-1 font-normal text-muted">(solo para BS)</span>
+            ) : null}
+          </label>
+          <input
+            id="exchangeRate"
+            type="number"
+            inputMode="decimal"
+            step="any"
+            min="0"
+            disabled={!rateEnabled}
+            placeholder={rateEnabled ? "Bs por unidad" : "—"}
+            className={fieldClass}
+            {...register("exchangeRate", {
+              setValueAs: (value) =>
+                value === "" || value === null ? undefined : Number(value),
+            })}
+          />
+          {errors.exchangeRate ? (
+            <p className={errorClass}>{errors.exchangeRate.message}</p>
+          ) : null}
+        </div>
+
+        <div className="flex flex-col gap-1.5">
+          <label htmlFor="reference" className={labelClass}>
+            Imagen de referencia {requiredMark}
+          </label>
+          <Controller
+            control={control}
+            name="reference"
+            render={({ field: { onChange, onBlur, name, ref } }) => (
+              <input
+                id="reference"
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                name={name}
+                ref={ref}
+                onBlur={onBlur}
+                onChange={(event) => onChange(event.target.files?.[0])}
+                className={`${fieldClass} py-2.5 text-muted file:mr-3 file:rounded-lg file:border-0 file:bg-accent-soft file:px-3 file:py-2 file:text-sm file:font-semibold file:text-accent-strong`}
+              />
+            )}
+          />
+          {errors.reference ? (
+            <p className={errorClass}>{errors.reference.message as string}</p>
+          ) : null}
+        </div>
+
+        <button
+          type="submit"
+          className="mt-1 rounded-xl bg-accent px-4 py-3.5 text-base font-semibold text-white shadow-sm transition hover:bg-accent-strong active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          {isPending ? "Registrando…" : "Registrar aporte"}
+        </button>
+
+        {serverState.status === "error" ? (
+          <p className="rounded-xl bg-danger/10 px-4 py-3 text-sm font-medium text-danger">
+            {serverState.message}
+          </p>
+        ) : null}
+      </fieldset>
     </form>
   );
 }
