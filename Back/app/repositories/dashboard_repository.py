@@ -26,7 +26,7 @@ class DashboardRepository:
                     func.sum(case((Donacion.moneda == "USDT", Donacion.cantidad), else_=0)), 0
                 ).label("total_usdt"),
                 func.coalesce(
-                    func.sum(case((Donacion.moneda == "EURO", Donacion.cantidad), else_=0)), 0
+                    func.sum(case((Donacion.moneda == "EUROS", Donacion.cantidad), else_=0)), 0
                 ).label("total_eur"),
                 func.coalesce(
                     func.sum(case((Donacion.moneda == "LIBRAS ESTERLINAS", Donacion.cantidad), else_=0)), 0
@@ -47,7 +47,7 @@ class DashboardRepository:
                     func.sum(case((Compra.moneda == "USDT", Compra.cantidad), else_=0)), 0
                 ).label("total_usdt"),
                 func.coalesce(
-                    func.sum(case((Compra.moneda == "EURO", Compra.cantidad), else_=0)), 0
+                    func.sum(case((Compra.moneda == "EUROS", Compra.cantidad), else_=0)), 0
                 ).label("total_eur"),
                 func.coalesce(
                     func.sum(case((Compra.moneda == "LIBRAS ESTERLINAS", Compra.cantidad), else_=0)), 0
