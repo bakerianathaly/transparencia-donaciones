@@ -2,24 +2,24 @@ from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.sessions import get_db
+from app.repositories.compra_repository import CompraRepository
 from app.repositories.dashboard_repository import DashboardRepository
 from app.repositories.donacion_repository import DonacionRepository
-from app.repositories.producto_repository import ProductoRepository
+from app.services.compra import CompraService
 from app.services.dashboard import DashboardService
 from app.services.donacion import DonacionService
-from app.services.producto import ProductoService
 
 
-class ProductoDeps:
+class CompraDeps:
     @staticmethod
-    def get_repository(db: AsyncSession = Depends(get_db)) -> ProductoRepository:
-        return ProductoRepository(db)
+    def get_repository(db: AsyncSession = Depends(get_db)) -> CompraRepository:
+        return CompraRepository(db)
 
     @staticmethod
     def get_service(
-        repo: ProductoRepository = Depends(get_repository),
-    ) -> ProductoService:
-        return ProductoService(repo)
+        repo: CompraRepository = Depends(get_repository),
+    ) -> CompraService:
+        return CompraService(repo)
 
 
 class DashboardDeps:
