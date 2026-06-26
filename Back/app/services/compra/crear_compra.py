@@ -20,17 +20,16 @@ class CrearCompra:
         self._validar(data)
 
         loop = asyncio.get_event_loop()
-        imagen_url = await loop.run_in_executor(None, self.r2.subir_imagen, data.imagen_base64)
+        imagen_url = await loop.run_in_executor(
+            None, self.r2.subir_imagen, data.imagen_base64
+        )
 
         return await self.repository.create(data, imagen_url)
 
     def _validar(self, data: CompraCreate) -> None:
         if not data.nombre_local or len(data.nombre_local.strip()) < 2:
-            raise ValidationException("El nombre del local debe tener al menos 2 caracteres")
-
-        if not data.moneda or data.moneda.upper() not in MONEDAS_VALIDAS:
             raise ValidationException(
-                f"Moneda inválida. Las monedas permitidas son: {', '.join(MONEDAS_VALIDAS)}"
+                "El nombre del local debe tener al menos 2 caracteres"
             )
 
         if data.cantidad < self.MIN_CANTIDAD:
