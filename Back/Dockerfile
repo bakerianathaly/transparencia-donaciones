@@ -2,16 +2,17 @@ FROM python:3.13-slim
 
 WORKDIR /backend
 
-# Copy configuration files first for Docker layer caching
-COPY ./pyproject.toml ./
-# Note: If your pyproject.toml references a README.md or setup.cfg, copy them here too
+# Copy the pyproject.toml from the 'Back' folder relative to your repository root
+COPY ./Back/pyproject.toml ./
 
-# Upgrade pip and install the dependencies defined in pyproject.toml
+# Upgrade pip and install dependencies natively
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir .
 
-COPY . .
+# Copy the contents of the 'Back' subfolder into the container's working directory
+COPY ./Back/ .
 
 EXPOSE 8010
 
+# Command to run the FastAPI application using Uvicorn
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8010"]
