@@ -1,4 +1,4 @@
-"use server";
+  "use server";
 
 import { z } from "zod";
 import { donationSchema } from "@/lib/donations/schema";
@@ -102,9 +102,9 @@ export type PurchaseActionState =
 /**
  * Registra una compra.
  *
- * Recibe la imagen del comprobante como data URL base64 (no multipart), valida
- * del lado del servidor y confirma. El envío real al backend (FastAPI, carpeta
- * Back/) se cablea cuando el endpoint esté listo.
+ * Recibe la imagen del comprobante como data URL base64, valida del lado del
+ * servidor y envía el payload JSON al backend (FastAPI, carpeta Back/) en
+ * POST /api/v1/compras/.
  */
 export async function registerPurchase(
   input: unknown,
@@ -119,9 +119,41 @@ export async function registerPurchase(
     };
   }
 
-  // TODO(Back): POST hacia la API de FastAPI cuando exista el endpoint.
-  return {
-    status: "success",
-    message: `Compra en ${parsed.data.storeName} registrada (pendiente de envío al backend).`,
+  // El schema guarda el data URL completo; el backend espera base64 puro
+  // (sin el prefijo "data:image/...;base64,"), igual que en donaciones.
+  const imagenBase64 = parsed.data.image.slice(
+    parsed.data.image.indexOf(",") + 1,
+  );
+
+  const payload = {
+    nombre_local: parsed.data.storeName,
+    moneda: CURRENCY_LABELS[parsed.data.currency],
+    cantidad: parsed.data.amount,
+    imagen_base64: imagenBase64,
   };
+
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/v1/compras/`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    if (!res.ok) {
+      return {
+        status: "error",
+        message: "No se pudo registrar la compra. Intentá de nuevo.",
+      };
+    }
+
+    return {
+      status: "success",
+      message: "¡La compra fue registrada exitosamente!",
+    };
+  } catch {
+    return {
+      status: "error",
+      message: "No se pudo conectar con el servidor. Intentá de nuevo.",
+    };
+  }
 }
