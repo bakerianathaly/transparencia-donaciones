@@ -11,7 +11,7 @@ class DonacionRepository:
     def __init__(self, db: AsyncSession):
         self.db = db
 
-    async def create(self, data: DonacionCreate, cantidad_bolivares) -> Donacion:
+    async def create(self, data: DonacionCreate, imagen_url: str, cantidad_bolivares) -> Donacion:
         try:
             donacion = Donacion(
                 nombre=data.nombre,
@@ -20,7 +20,7 @@ class DonacionRepository:
                 cantidad=data.cantidad,
                 tasa_cambio=data.tasa_cambio,
                 cantidad_bolivares=cantidad_bolivares,
-                imagen_url=data.imagen_base64,
+                imagen_url=imagen_url,
             )
             self.db.add(donacion)
             await self.db.commit()

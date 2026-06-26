@@ -1,8 +1,10 @@
+import asyncio
 from decimal import Decimal
 
 from app.exceptions import ValidationException
 from app.models.donacion import Donacion, DonacionCreate
 from app.repositories.donacion_repository import DonacionRepository
+from app.services.r2 import R2Service
 
 
 class CrearDonacion:
@@ -11,15 +13,20 @@ class CrearDonacion:
 
     def __init__(self, repository: DonacionRepository):
         self.repository = repository
+        self.r2 = R2Service()
 
     async def execute(self, data: DonacionCreate) -> Donacion:
         self._validar(data)
+
+        loop = asyncio.get_event_loop()
+        imagen_url = await loop.run_in_executor(None, self.r2.subir_imagen, data.imagen_base64)
+
         cantidad_bolivares = (
             data.cantidad
             if data.moneda.upper() == "BOLIVARES"
             else data.cantidad * data.tasa_cambio
         )
-        return await self.repository.create(data, cantidad_bolivares)
+        return await self.repository.create(data, imagen_url, cantidad_bolivares)
 
     def _validar(self, data: DonacionCreate) -> None:
         if not data.nombre or len(data.nombre.strip()) < 2:
