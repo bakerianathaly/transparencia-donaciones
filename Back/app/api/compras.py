@@ -18,6 +18,7 @@ async def registrar_compra(
     compra: CompraCreate,
     service: CompraService = Depends(CompraDeps.get_service),
 ) -> APIResponse[CompraResponse]:
+    print(compra)
     try:
         nueva = await service.crear.execute(compra)
         return APIResponse(success=True, message="Compra registrada", outcome=[nueva])
