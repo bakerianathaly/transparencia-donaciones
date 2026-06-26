@@ -7,6 +7,7 @@ const links = [
   { href: "/compras", label: "Compra", full: "Registrar compra" },
   { href: "/resumen", label: "Resumen", full: "Ver resumen" },
   { href: "/registro", label: "Donación", full: "Registrar donación" },
+  { href: "/donaciones", label: "Listado", full: "Listado de donaciones" },
 ] as const;
 
 const baseItem =
