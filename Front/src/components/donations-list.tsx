@@ -1,4 +1,4 @@
-import Image from "next/image";
+import DonationImage from "@/components/donation-image";
 import type { Donation } from "@/lib/dashboard/donations";
 
 // El backend devuelve la moneda en MAYÚSCULAS y plural (ej: "EUROS").
@@ -39,16 +39,11 @@ export default function DonationsList({ data }: DonationsListProps) {
             key={d.id}
             className="overflow-hidden rounded-2xl border border-border bg-surface shadow-sm"
           >
-            {/* Imagen grande a todo el ancho */}
-            <div className="relative aspect-[4/3] w-full">
-              <Image
-                src={d.imagen_url}
-                alt={`Comprobante de donación de ${d.nombre}`}
-                fill
-                className="object-cover"
-                sizes="(max-width: 448px) 100vw, 448px"
-              />
-            </div>
+            {/* Imagen grande a todo el ancho; al tocarla se amplía */}
+            <DonationImage
+              src={d.imagen_url}
+              alt={`Comprobante de donación de ${d.nombre}`}
+            />
 
             {/* Datos */}
             <div className="flex flex-col gap-1.5 p-4">
